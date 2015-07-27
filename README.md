@@ -20,3 +20,6 @@ The league has 10 weight classes, 5 each for men and women, with a minimum weigh
 
 Design the data model for this client. Use any design tools you like. Save your model as text or a legible image file.
 
+
+Donald Kelsey
+MMA data model in mma_model.txt

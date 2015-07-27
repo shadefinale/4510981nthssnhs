@@ -1,0 +1,80 @@
+mma_model.txt
+
+The league holds an event about once a month at one of a handful of regular venues. Every venue has a different capacity. Every event has between 8 and 12 fights. The fights are scheduled in a certain order but they won't start at a specific time.
+
+The league has 10 weight classes, 5 each for men and women, with a minimum weight for each. Fights have two fighters, who both belong to the same weight class. After the fight is over, there has to be a record of the winner. Fights don't end in draws.
+
+Design the data model for this client. Use any design tools you like. Save your model as text or a legible image file.
+
+Models (Assume all tables have ID primary keys if not specified.)
+
+Events
+  - Venue ID - foreign_key, integer
+  - Name - string
+  - Date - datetime
+
+Venues
+  - Name - string
+  - Location - string (This doesn't need to be a separate table.)
+
+
+# The fight record represents the many-to-many relationship between fighters.
+# It also acts as historical data for previous fights.
+# Fights that have not happened yet simply have their result as NULL.
+# "The fights are scheduled in a certain order but they won't start at
+# a specific time." leads me to believe that the actual time a fight takes place is # irrelevant as long as we can get the date it happened from the Events table.
+Fight Record
+  - Fighter 1 id - foreign_key, integer
+  - Fighter 2 id - foreign_key, integer
+  # The result is null until the fight is actually completed.
+  - Result - integer of winner's ID.
+  - Event ID - foreign_key, integer
+  - Position - integer (1st/2nd/3rd/etc fight of the event)
+  - Weight Class ID - foreign_key, integer
+  (We record this in the record in case one of the fighters ends up
+  switching weight classes.)
+
+
+Weight Classes
+  - id - primary key, 1-10 for weight classes, 1-5 is male, 1-5 is female.
+  - Min Weight - Integer (This is really just for front-facing for users.)
+
+# We don't record the fighter's current weight or weight class.
+# Say there is a one-off fight where someone from a lower weight class
+# agrees to fight someone at a higher weight class, we will just record that
+# in the fight record.
+
+# Personal information past the DOB is assumed to be non-relevant.
+# If it turns out that we actually want to log the fighter's location,
+# we would make a separate location table and probably have the venue's
+# location become a foreign key to a row on the location table as well.
+Fighters
+  - Name - string
+  - Nickname - string
+  - DOB - datetime
+
+How an Event ends up playing out.
+Create a new event named something at a specific venue on a certain date.
+
+For all the scheduled fights, you create new Fight Records with
+the necessary information.
+
+When a fight finishes, you record the winner in the fight record.
+
+To calculate a Fighter's W/L ratio you can query for all fight records
+where the fighter's id exists and the result is not null, then count how many
+of those records have a result that matches their id to calculate how many
+fights they actually won.
+
+You can filter those results by weight class or event ID or even vs specific
+opponents.
+
+Relationships
+
+Venues have many Events (one to many)
+
+Events have many fight_records (one to many)
+
+Fighters fight many Fighters (many to many, the join table is the fight_record)
+
+Weight classes have many fight_records (one to many)
